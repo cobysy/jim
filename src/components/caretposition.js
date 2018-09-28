@@ -6,7 +6,7 @@ Copyright (c) 2012- Hiroki Akiyama http://akiroom.com/
 caretposition.js is free software distributed under the terms of the MIT license.
 */
 
-Measurement = new function() {
+var Measurement = new function() {
 	this.caretPos = function(textarea, mode) {
 		var targetElement = textarea;
 		if (typeof jQuery != 'undefined') {

@@ -1,6 +1,6 @@
 import { Roman2Hiragana } from './Roman2Hiragana';
 import { Conversion } from "./Conversion";
-import { Measurement } from './caretposition';
+import Measurement from "./caretposition";
 
 interface ISegmentsInfo {
     curpos: number;
@@ -50,10 +50,10 @@ export class Sentence {
         //         this.focusedContextMenuItem = '';
         //     });
 
-        $textArea.onkeydown((e) => {
+        $textArea.addEventListener('keydown', (e: KeyboardEvent) => {
             this.onKeydown(e);
         });
-        $textArea.onkeypress((e) => {
+        $textArea.addEventListener("keypress", (e: KeyboardEvent) => {
             this.onKeypress(e);
         });
     }
@@ -320,8 +320,14 @@ export class Sentence {
     }
 
     insFld(insTxt, insStartPos, insEndPos, dltPos?) {
-        const startPos = insStartPos || this.$textArea.selectionStart;
-        const endPos = insEndPos || this.$textArea.selectionEnd;
+        let startPos = insStartPos;
+        let endPos = insEndPos;
+        if (typeof (insStartPos) === 'undefined') {
+            startPos = this.$textArea.selectionStart;
+        }
+        if (typeof (insEndPos) === 'undefined') {
+            endPos = this.$textArea.selectionEnd;
+        }
         const t = this.$textArea.value;
         const p = t.substr(0, startPos);
         const s = t.substring(endPos);
