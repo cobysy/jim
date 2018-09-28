@@ -143,7 +143,7 @@ export class Sentence {
         this.inputText = "";
         this.hiragana = "";
         this.segmentsInfo = null;
-        (<any>$).contextMenu("destroy", this.contextMenuSelector);
+        $.contextMenu("destroy", this.contextMenuSelector);
         this.popuped = false;
         this.katakana = false;
         this.preLen = 0;
@@ -212,7 +212,7 @@ export class Sentence {
         this.conv.get(mode, sentence, (err, resp) => {
             if (!err) {
                 // エラーになるがとりあえず動くのでそのまま.
-                (<any>$).contextMenu('destroy', this.contextMenuSelector);
+                $.contextMenu('destroy', this.contextMenuSelector);
 
                 if (sentence) {
                     if (mode === "normal") {
@@ -235,7 +235,7 @@ export class Sentence {
                         );
 
                         const cp = this.caretPos();
-                        (<any>$(this.contextMenuSelector)).contextMenu(
+                        $(this.contextMenuSelector).contextMenu(
                             {
                                 x: cp.left,
                                 y: cp.top + 18 // ここの値は本来ならフォントサイズから求めるべきだが
@@ -259,10 +259,10 @@ export class Sentence {
         }
 
         const _this = this;
-        (<any>$).contextMenu({
+        $.contextMenu({
             selector: this.contextMenuSelector,
             trigger: 'none',
-            position: (opt, x, y) => {
+            position: (opt: any, x, y) => {
                 const $win = $(window);
                 const bottom = $win.scrollTop() + $win.height();
                 const height = opt.$menu.height();
@@ -306,7 +306,7 @@ export class Sentence {
         }
         if (refresh) {
             const curpos = this.segmentsInfo.curpos;
-            ($ as any).contextMenu("destroy", this.contextMenuSelector);
+            $.contextMenu("destroy", this.contextMenuSelector);
             const candidates = this.segmentsInfo.segments[curpos].candidates;
             this.setPopupItem("normal", candidates, (opt) => {
                 const i = candidates.indexOf(this.segmentsInfo.sels[curpos]);
@@ -316,7 +316,7 @@ export class Sentence {
             });
 
             const cp = this.caretPos();
-            (<any>$(this.contextMenuSelector)).contextMenu({
+            $(this.contextMenuSelector).contextMenu({
                 x: cp.left,
                 y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
             });
@@ -336,7 +336,6 @@ export class Sentence {
         const p = t.substr(0, startPos);
         const s = t.substring(endPos);
         this.$textArea.value = p + insTxt + s;
-        console.log(`insFld: ${p} ${insTxt} ${s}`);
         let pos = startPos + insTxt.length;
         if (dltPos) {
             pos = startPos + dltPos;

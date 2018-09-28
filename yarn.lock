@@ -581,6 +581,16 @@
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.5.tgz#6163dc60078d215ec46186dc76062ef6ed68d39c"
 
+"@types/jquery.contextmenu@^1.7.33":
+  version "1.7.33"
+  resolved "https://registry.yarnpkg.com/@types/jquery.contextmenu/-/jquery.contextmenu-1.7.33.tgz#bac711bbd39f711d11cd0287a8401f7b52174cb8"
+  dependencies:
+    "@types/jquery" "*"
+
+"@types/jquery@*", "@types/jquery@^3.3.10":
+  version "3.3.10"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.10.tgz#d0afaec7ee55f591992e74c607df5dc7cd9c76ab"
+
 "@types/mocha@^5.2.4":
   version "5.2.5"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.5.tgz#8a4accfc403c124a0bafe8a9fc61a05ec1032073"
@@ -3799,6 +3809,10 @@ joi@^13.0.0:
     isemail "3.x.x"
     topo "3.x.x"
 
+jquery-contextmenu@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/jquery-contextmenu/-/jquery-contextmenu-2.7.0.tgz#fa489641051dcdb726094ee5960c0a43070c2a36"
+
 jquery@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
@@ -6433,6 +6447,10 @@ tar@^4:
     mkdirp "^0.5.0"
     safe-buffer "^5.1.2"
     yallist "^3.0.2"
+
+textarea-caret@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/textarea-caret/-/textarea-caret-3.1.0.tgz#5d5a35bb035fd06b2ff0e25d5359e97f2655087f"
 
 thread-loader@^1.1.5:
   version "1.2.0"

@@ -15,7 +15,8 @@
       "webpack-env",
       "mocha",
       "chai",
-      "jquery"
+      "jquery",
+      "jquery.contextmenu"
     ],
     "paths": {
       "@/*": [
