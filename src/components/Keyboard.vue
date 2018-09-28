@@ -45,5 +45,22 @@ export default class Keyboard extends Vue {
     width: 100%;
     height: 400px;
     ime-mode: disabled;
+    border: 1px rgba(0, 0, 0, 0.5) solid;
+    overflow: auto;
+    outline: none;
+    border-radius: .2em;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .5);
+}
+</style>
+<style>
+.context-menu-list {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .5) !important;
+}
+.context-menu-item
+{
+  padding-left: 0.4em !important;
+  padding-right: 0.4em !important;
+  padding-top: 0.15em !important;
+  padding-bottom: 0.15em !important;
 }
 </style>
