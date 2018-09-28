@@ -223,24 +223,24 @@ export class Sentence {
                     const len = candidates.length;
                     if (len > 0) {
                         _this.setPopupItem(
-                          mode,
-                          candidates,
-                          (opt) => {
-                            if (mode === "normal") {
-                              // 通常の変換ならば、最初の項目を選択しておく.
-                              opt.$menu.trigger(
-                                "nextcommand"
-                              );
+                            mode,
+                            candidates,
+                            (opt) => {
+                                if (mode === "normal") {
+                                    // 通常の変換ならば、最初の項目を選択しておく.
+                                    opt.$menu.trigger(
+                                        "nextcommand"
+                                    );
+                                }
                             }
-                          }
                         );
 
-                        const cp = caretPos(_this.$textArea);
+                        const cp = _this.caretPos();
                         (<any>$(_this.contextMenuSelector)).contextMenu(
-                          {
-                            x: cp.left,
-                            y: cp.top + 18 // ここの値は本来ならフォントサイズから求めるべきだが
-                          }
+                            {
+                                x: cp.left,
+                                y: cp.top + 18 // ここの値は本来ならフォントサイズから求めるべきだが
+                            }
                         );
                     }
                 }
@@ -279,7 +279,7 @@ export class Sentence {
                 }
                 this.$menu = opt.$menu;
             },
-            callback: (key, options)  => {
+            callback: (key, options) => {
                 this.insFld(this.getSeledTxt(key).txt, this.insPos, this.insPos + this.preLen);
             },
             items
@@ -310,7 +310,7 @@ export class Sentence {
                 }
             });
 
-            const cp = caretPos(this.$textArea);
+            const cp = this.caretPos();
             (<any>$(this.contextMenuSelector)).contextMenu({
                 x: cp.left,
                 y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
@@ -338,5 +338,37 @@ export class Sentence {
         }
         this.$textArea.selectionStart = pos;
         this.$textArea.selectionEnd = pos;
+    }
+
+    caretPos() {
+        const el = this.$textArea;
+        const cp = caretPos(el, el.selectionEnd);
+        return {
+            top: el.offsetTop
+                - el.scrollTop
+                + cp.top,
+            left: el.offsetLeft
+                - el.scrollLeft
+                + cp.left
+        };
+    }
+
+    getElementPos(element) {
+        // Get scroll amount.
+        const html = document.documentElement;
+        const body = document.body;
+        const scrollLeft = (body.scrollLeft || html.scrollLeft);
+        const scrollTop = (body.scrollTop || html.scrollTop);
+
+        // Adjust "IE 2px bugfix" and scroll amount.
+        const rect = element.getBoundingClientRect();
+        const left = rect.left - html.clientLeft + scrollLeft;
+        const top = rect.top - html.clientTop + scrollTop;
+        const right = rect.right - html.clientLeft + scrollLeft;
+        const bottom = rect.bottom - html.clientTop + scrollTop;
+        return {
+            left: (left), top: (top),
+            right: (right), bottom: (bottom)
+        };
     }
 }
