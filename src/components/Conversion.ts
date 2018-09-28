@@ -1,5 +1,5 @@
 export class Conversion {
     get(mode, sentence, cb) {
-        return;
+        cb(null, { segments: [{ candidates: ['abc', 'def'] }] });
     }
 }

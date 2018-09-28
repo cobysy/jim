@@ -22,6 +22,9 @@
     "member-access": false,
     "variable-name": false,
     "trailing-comma": false,
-    "no-var-requires": false    
+    "no-var-requires": false,
+    "no-angle-bracket-type-assertion": false,
+    "no-console": false,
+    "radix": false
   }
 }

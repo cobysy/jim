@@ -1,6 +1,6 @@
 import { Roman2Hiragana } from './Roman2Hiragana';
 import { Conversion } from "./Conversion";
-import Measurement from "./caretposition";
+const caretPos = require("textarea-caret");
 
 interface ISegmentsInfo {
     curpos: number;
@@ -30,8 +30,6 @@ export class Sentence {
         this.status = true;
 
         this.initProp();
-
-        const that = this;
 
         // 変換候補が選択されているかの判定.
         // このクラス内で登録したメニューかの識別はおこなっていない.
@@ -145,7 +143,7 @@ export class Sentence {
         this.inputText = "";
         this.hiragana = "";
         this.segmentsInfo = null;
-        $.contextMenu("destroy", this.contextMenuSelector);
+        (<any>$).contextMenu("destroy", this.contextMenuSelector);
         this.popuped = false;
         this.katakana = false;
         this.preLen = 0;
@@ -186,8 +184,6 @@ export class Sentence {
     }
 
     predictive() {
-        const that = this;
-
         // ローマ字へ変換.
         const conv = Roman2Hiragana.conv(this.inputText);
         if (conv.complete) {
@@ -212,32 +208,40 @@ export class Sentence {
     }
 
     get(mode, sentence) {
-        const that = this;
+        const _this = this;
         this.segmentsInfo = null;
         this.conv.get(mode, sentence, (err, resp) => {
             if (!err) {
                 // エラーになるがとりあえず動くのでそのまま.
-                $.contextMenu('destroy', this.contextMenuSelector);
+                (<any>$).contextMenu('destroy', _this.contextMenuSelector);
 
                 if (sentence) {
                     if (mode === "normal") {
-                        this.setSegmentsInfo(resp.segments);
+                        _this.setSegmentsInfo(resp.segments);
                     }
                     const candidates = resp.segments[0].candidates;
                     const len = candidates.length;
                     if (len > 0) {
-                        this.setPopupItem(mode, candidates, (opt) => {
+                        _this.setPopupItem(
+                          mode,
+                          candidates,
+                          (opt) => {
                             if (mode === "normal") {
-                                // 通常の変換ならば、最初の項目を選択しておく.
-                                opt.$menu.trigger("nextcommand");
+                              // 通常の変換ならば、最初の項目を選択しておく.
+                              opt.$menu.trigger(
+                                "nextcommand"
+                              );
                             }
-                        });
+                          }
+                        );
 
-                        const cp = Measurement.caretPos(this.$textArea);
-                        $(this.contextMenuSelector).contextMenu({
+                        const cp = caretPos(_this.$textArea);
+                        (<any>$(_this.contextMenuSelector)).contextMenu(
+                          {
                             x: cp.left,
-                            y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
-                        });
+                            y: cp.top + 18 // ここの値は本来ならフォントサイズから求めるべきだが
+                          }
+                        );
                     }
                 }
             }
@@ -255,8 +259,7 @@ export class Sentence {
             items[word] = { name: word };
         }
 
-        const that = this;
-        $.contextMenu({
+        (<any>$).contextMenu({
             selector: this.contextMenuSelector,
             trigger: 'none',
             position: (opt, x, y) => {
@@ -300,7 +303,6 @@ export class Sentence {
             const curpos = this.segmentsInfo.curpos;
             ($ as any).contextMenu("destroy", this.contextMenuSelector);
             const candidates = this.segmentsInfo.segments[curpos].candidates;
-            const that = this;
             this.setPopupItem("normal", candidates, (opt) => {
                 const i = candidates.indexOf(this.segmentsInfo.sels[curpos]);
                 for (let idx = 0; idx <= i; idx++) {
@@ -308,8 +310,8 @@ export class Sentence {
                 }
             });
 
-            const cp = Measurement.caretPos(this.$textArea);
-            $(this.contextMenuSelector).contextMenu({
+            const cp = caretPos(this.$textArea);
+            (<any>$(this.contextMenuSelector)).contextMenu({
                 x: cp.left,
                 y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
             });
@@ -329,6 +331,7 @@ export class Sentence {
         const p = t.substr(0, startPos);
         const s = t.substring(endPos);
         this.$textArea.value = p + insTxt + s;
+        console.log(`insFld: {p} {intTxt} {s}`);
         let pos = startPos + insTxt.length;
         if (dltPos) {
             pos = startPos + dltPos;
