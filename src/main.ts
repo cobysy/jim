@@ -10,7 +10,6 @@ declare global {
 const $ = require('jquery');
 window.$ = $;
 require('jquery-contextmenu');
-
 import 'jquery-contextmenu/dist/jquery.contextMenu.css';
 
 Vue.config.productionTip = false;
