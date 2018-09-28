@@ -34,15 +34,15 @@ export class Sentence {
         // 変換候補が選択されているかの判定.
         // このクラス内で登録したメニューかの識別はおこなっていない.
         // クラスが破棄されたあとの動作は考えていない.
-        $(document.body).on("contextmenu:focus", ".context-menu-item",
-            (e) => {
-                this.focusedContextMenuItem = e.target.textContent;
-                if (this.isPreEdit()) {
-                    const s = this.getSeledTxt(this.focusedContextMenuItem);
-                    this.insFld(s.txt, this.insPos, this.insPos + this.preLen, s.dlt);
-                    this.preLen = s.txt.length;
-                }
-            });
+        // $(document.body).on("contextmenu:focus", ".context-menu-item",
+        //     (e) => {
+        //         this.focusedContextMenuItem = e.target.textContent;
+        //         if (this.isPreEdit()) {
+        //             const s = this.getSeledTxt(this.focusedContextMenuItem);
+        //             this.insFld(s.txt, this.insPos, this.insPos + this.preLen, s.dlt);
+        //             this.preLen = s.txt.length;
+        //         }
+        //     });
         $(document.body).on("contextmenu:blur", ".context-menu-item",
             (e) => {
                 this.focusedContextMenuItem = '';
@@ -208,21 +208,20 @@ export class Sentence {
     }
 
     get(mode, sentence) {
-        const _this = this;
         this.segmentsInfo = null;
         this.conv.get(mode, sentence, (err, resp) => {
             if (!err) {
                 // エラーになるがとりあえず動くのでそのまま.
-                (<any>$).contextMenu('destroy', _this.contextMenuSelector);
+                (<any>$).contextMenu('destroy', this.contextMenuSelector);
 
                 if (sentence) {
                     if (mode === "normal") {
-                        _this.setSegmentsInfo(resp.segments);
+                        this.setSegmentsInfo(resp.segments);
                     }
                     const candidates = resp.segments[0].candidates;
                     const len = candidates.length;
                     if (len > 0) {
-                        _this.setPopupItem(
+                        this.setPopupItem(
                             mode,
                             candidates,
                             (opt) => {
@@ -235,8 +234,8 @@ export class Sentence {
                             }
                         );
 
-                        const cp = _this.caretPos();
-                        (<any>$(_this.contextMenuSelector)).contextMenu(
+                        const cp = this.caretPos();
+                        (<any>$(this.contextMenuSelector)).contextMenu(
                             {
                                 x: cp.left,
                                 y: cp.top + 18 // ここの値は本来ならフォントサイズから求めるべきだが
@@ -259,6 +258,7 @@ export class Sentence {
             items[word] = { name: word };
         }
 
+        const _this = this;
         (<any>$).contextMenu({
             selector: this.contextMenuSelector,
             trigger: 'none',
@@ -280,7 +280,12 @@ export class Sentence {
                 this.$menu = opt.$menu;
             },
             callback: (key, options) => {
-                this.insFld(this.getSeledTxt(key).txt, this.insPos, this.insPos + this.preLen);
+                const selTxt = this.getSeledTxt(key).txt;
+                this.insFld(selTxt, this.insPos, this.insPos + this.preLen);
+                this.initProp();
+
+                this.$textArea.focus();
+                this.$textArea.selectionEnd = this.insPos + selTxt.length;
             },
             items
         });
@@ -331,7 +336,7 @@ export class Sentence {
         const p = t.substr(0, startPos);
         const s = t.substring(endPos);
         this.$textArea.value = p + insTxt + s;
-        console.log(`insFld: {p} {intTxt} {s}`);
+        console.log(`insFld: ${p} ${insTxt} ${s}`);
         let pos = startPos + insTxt.length;
         if (dltPos) {
             pos = startPos + dltPos;
