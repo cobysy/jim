@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Sentence } from './Sentence';
+import { Sentence as CSentence } from './Sentence';
 
 interface ISegmentsInfo {
   curpos: number;
@@ -15,13 +15,13 @@ interface ISegmentsInfo {
 }
 
 @Component
-export default class Keyboard extends Vue {
+export default class Sentence extends Vue {
 
   $refs!: {
     txtArea: HTMLTextAreaElement;
   };
 
-  sentence?: Sentence;
+  sentence?: CSentence;
 
   @Prop() private msg!: string;
 
@@ -30,7 +30,7 @@ export default class Keyboard extends Vue {
     if (document.readyState === 'complete') {
         const $target = this.$refs.txtArea;
         $target.focus();
-        this.sentence = new Sentence($target, '#main');
+        this.sentence = new CSentence($target, '#main');
     }
    };
   }
