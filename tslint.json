@@ -21,6 +21,7 @@
     "jsdoc-format": false,
     "member-access": false,
     "variable-name": false,
-    "trailing-comma": false
+    "trailing-comma": false,
+    "no-var-requires": false    
   }
 }

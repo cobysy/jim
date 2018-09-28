@@ -30,7 +30,7 @@ export default class Sentence extends Vue {
     if (document.readyState === 'complete') {
         const $target = this.$refs.txtArea;
         $target.focus();
-        this.sentence = new CSentence($target);
+        this.sentence = new CSentence($target, '#main');
     }
    };
   }

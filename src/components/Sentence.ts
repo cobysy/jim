@@ -13,18 +13,19 @@ export class Sentence {
     status: boolean;
     inputText: string;
     hiragana: string;
-    focusedContextMenuItem: boolean;
+    focusedContextMenuItem: string;
     insPos: number;
     preLen: number;
     katakana: boolean;
     popuped: boolean;
     segmentsInfo: ISegmentsInfo | null = null;
     conv: Conversion;
+    contextMenuSelector: string;
+    $menu: any;
 
-    constructor($textArea: HTMLTextAreaElement) {
-        // var Sentence = function ($textArea, contextMenuSelector) {
+    constructor($textArea: HTMLTextAreaElement, contextMenuSelector: string) {
         this.$textArea = $textArea;
-        // this.contextMenuSelector = contextMenuSelector;
+        this.contextMenuSelector = contextMenuSelector;
         this.conv = new Conversion();
         this.status = true;
 
@@ -35,22 +36,21 @@ export class Sentence {
         // 変換候補が選択されているかの判定.
         // このクラス内で登録したメニューかの識別はおこなっていない.
         // クラスが破棄されたあとの動作は考えていない.
-        // $(document.body).on("contextmenu:focus", ".context-menu-item",
-        //     function (e) {
-        //         this.focusedContextMenuItem = e.target.textContent;
-        //         if (this.isPreEdit()) {
-        //             var s = this.getSeledTxt(this.focusedContextMenuItem);
-        //             this.insFld(this.this.$textArea, s.txt, this.insPos,
-        //                 this.insPos + this.preLen, s.dlt);
-        //             this.preLen = s.txt.length;
-        //         }
-        //     });
-        // $(document.body).on("contextmenu:blur", ".context-menu-item",
-        //     function (e) {
-        //         this.focusedContextMenuItem = '';
-        //     });
+        $(document.body).on("contextmenu:focus", ".context-menu-item",
+            (e) => {
+                this.focusedContextMenuItem = e.target.textContent;
+                if (this.isPreEdit()) {
+                    const s = this.getSeledTxt(this.focusedContextMenuItem);
+                    this.insFld(s.txt, this.insPos, this.insPos + this.preLen, s.dlt);
+                    this.preLen = s.txt.length;
+                }
+            });
+        $(document.body).on("contextmenu:blur", ".context-menu-item",
+            (e) => {
+                this.focusedContextMenuItem = '';
+            });
 
-        $textArea.addEventListener('keydown', (e: KeyboardEvent) => {
+        $textArea.addEventListener("keydown", (e: KeyboardEvent) => {
             this.onKeydown(e);
         });
         $textArea.addEventListener("keypress", (e: KeyboardEvent) => {
@@ -145,7 +145,7 @@ export class Sentence {
         this.inputText = "";
         this.hiragana = "";
         this.segmentsInfo = null;
-        // $.contextMenu('destroy', this.contextMenuSelector);
+        $.contextMenu("destroy", this.contextMenuSelector);
         this.popuped = false;
         this.katakana = false;
         this.preLen = 0;
@@ -161,11 +161,11 @@ export class Sentence {
         this.segmentsInfo = { curpos: 0, segments, sels };
     }
 
-    getSeledTxt(in_txt: string, in_pos: number) {
+    getSeledTxt(in_txt: string, in_pos?: number) {
         const ret = { txt: in_txt, dlt: null };
         if (this.segmentsInfo) {
             ret.txt = "";
-            const pos = in_pos || this.segmentsInfo.curpos;
+            const pos = in_pos !== undefined ? in_pos : this.segmentsInfo.curpos;
             if (in_txt) {
                 this.segmentsInfo.sels[pos] = in_txt;
             }
@@ -214,10 +214,10 @@ export class Sentence {
     get(mode, sentence) {
         const that = this;
         this.segmentsInfo = null;
-        this.conv.get(mode, sentence, function(err, resp) {
+        this.conv.get(mode, sentence, (err, resp) => {
             if (!err) {
                 // エラーになるがとりあえず動くのでそのまま.
-                // $.contextMenu('destroy', this.contextMenuSelector);
+                $.contextMenu('destroy', this.contextMenuSelector);
 
                 if (sentence) {
                     if (mode === "normal") {
@@ -234,10 +234,10 @@ export class Sentence {
                         });
 
                         const cp = Measurement.caretPos(this.$textArea);
-                        // $(this.contextMenuSelector).contextMenu({
-                        //     x: cp.left,
-                        //     y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
-                        // });
+                        $(this.contextMenuSelector).contextMenu({
+                            x: cp.left,
+                            y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
+                        });
                     }
                 }
             }
@@ -256,32 +256,31 @@ export class Sentence {
         }
 
         const that = this;
-        // $.contextMenu({
-        //     selector: this.contextMenuSelector,
-        //     trigger: 'none',
-        //     position: function (opt, x, y) {
-        //         var $win = $(window);
-        //         var bottom = $win.scrollTop() + $win.height();
-        //         var height = opt.$menu.height()
-        //         if (y + height > bottom) {
-        //             y = bottom - height
-        //             if (y < 0) {
-        //                 y = 0;
-        //             }
-        //             x = x + 8; // ここの値は本来ならフォントサイズから求めるべきだが
-        //         }
-        //         opt.$menu.css({ top: y, left: x });
-        //         if (cb) {
-        //             cb(opt);
-        //         }
-        //         this.$menu = opt.$menu;
-        //     },
-        //     callback: function (key, options) {
-        //         this.insFld(this.$textArea, this.getSeledTxt(key).txt,
-        //             this.insPos, this.insPos + this.preLen);
-        //     },
-        //     items: items
-        // });
+        $.contextMenu({
+            selector: this.contextMenuSelector,
+            trigger: 'none',
+            position: (opt, x, y) => {
+                const $win = $(window);
+                const bottom = $win.scrollTop() + $win.height();
+                const height = opt.$menu.height();
+                if (y + height > bottom) {
+                    y = bottom - height;
+                    if (y < 0) {
+                        y = 0;
+                    }
+                    x = x + 8; // ここの値は本来ならフォントサイズから求めるべきだが
+                }
+                opt.$menu.css({ top: y, left: x });
+                if (cb) {
+                    cb(opt);
+                }
+                this.$menu = opt.$menu;
+            },
+            callback: (key, options)  => {
+                this.insFld(this.getSeledTxt(key).txt, this.insPos, this.insPos + this.preLen);
+            },
+            items
+        });
     }
 
     switchSegment(allow) {
@@ -299,33 +298,31 @@ export class Sentence {
         }
         if (refresh) {
             const curpos = this.segmentsInfo.curpos;
-            // $.contextMenu('destroy', this.contextMenuSelector);
+            ($ as any).contextMenu("destroy", this.contextMenuSelector);
             const candidates = this.segmentsInfo.segments[curpos].candidates;
             const that = this;
-            // this.setPopupItem('normal', this.$textArea,
-            //     candidates,
-            //     function (opt) {
-            //         var i = candidates.indexOf(this.segmentsInfo.sels[curpos]);
-            //         for (var idx = 0; idx <= i; idx++) {
-            //             opt.$menu.trigger('nextcommand');
-            //         }
-            //     });
+            this.setPopupItem("normal", candidates, (opt) => {
+                const i = candidates.indexOf(this.segmentsInfo.sels[curpos]);
+                for (let idx = 0; idx <= i; idx++) {
+                    opt.$menu.trigger('nextcommand');
+                }
+            });
 
             const cp = Measurement.caretPos(this.$textArea);
-            // $(this.contextMenuSelector).contextMenu({
-            //     x: cp.left,
-            //     y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
-            // });
+            $(this.contextMenuSelector).contextMenu({
+                x: cp.left,
+                y: cp.top + 18  // ここの値は本来ならフォントサイズから求めるべきだが
+            });
         }
     }
 
     insFld(insTxt, insStartPos, insEndPos, dltPos?) {
         let startPos = insStartPos;
         let endPos = insEndPos;
-        if (typeof (insStartPos) === 'undefined') {
+        if (insStartPos === undefined) {
             startPos = this.$textArea.selectionStart;
         }
-        if (typeof (insEndPos) === 'undefined') {
+        if (insEndPos === undefined) {
             endPos = this.$textArea.selectionEnd;
         }
         const t = this.$textArea.value;
