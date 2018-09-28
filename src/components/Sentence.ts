@@ -331,7 +331,6 @@ export class Sentence {
         const p = t.substr(0, startPos);
         const s = t.substring(endPos);
         this.$textArea.value = p + insTxt + s;
-        console.log(`insFld: {p} {intTxt} {s}`);
         let pos = startPos + insTxt.length;
         if (dltPos) {
             pos = startPos + dltPos;
@@ -342,6 +341,7 @@ export class Sentence {
 
     caretPos() {
         const el = this.$textArea;
+        // https://stackoverflow.com/a/22446703/1225266
         const cp = caretPos(el, el.selectionEnd);
         return {
             top: el.offsetTop
@@ -350,25 +350,6 @@ export class Sentence {
             left: el.offsetLeft
                 - el.scrollLeft
                 + cp.left
-        };
-    }
-
-    getElementPos(element) {
-        // Get scroll amount.
-        const html = document.documentElement;
-        const body = document.body;
-        const scrollLeft = (body.scrollLeft || html.scrollLeft);
-        const scrollTop = (body.scrollTop || html.scrollTop);
-
-        // Adjust "IE 2px bugfix" and scroll amount.
-        const rect = element.getBoundingClientRect();
-        const left = rect.left - html.clientLeft + scrollLeft;
-        const top = rect.top - html.clientTop + scrollTop;
-        const right = rect.right - html.clientLeft + scrollLeft;
-        const bottom = rect.bottom - html.clientTop + scrollTop;
-        return {
-            left: (left), top: (top),
-            right: (right), bottom: (bottom)
         };
     }
 }
